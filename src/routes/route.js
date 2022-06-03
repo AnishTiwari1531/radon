@@ -45,21 +45,17 @@ res.send('Node Js Problem 4')
 
 
 router.get('/sol1', function (req, res) {
-    let arr = [1, 2, 3, 5];
-const miss = function (a){
-    let n = a.length;
-    let i, total=1;
-     
-    for (i = 2; i<= (n+1); i++)
-    {
-        total += i;
-        total -= a[i-2];
-    }
+let arr = [ 1, 2, 3, 5, 6, 7 ];
+let n = arr.length;
+function getMissingNo(a, n) {
+  
+    let total = Math.floor((n + 1) * (n + 2) / 2);
+    for (let i = 0; i < n; i++)
+        total -= a[i];
     return total;
 }
- 
-console.log(miss(arr));
-
+let miss = getMissingNo(arr, n);
+console.log(miss);
     res.send('Task given by Pritesh Sir = Problem 1')
 });
 
