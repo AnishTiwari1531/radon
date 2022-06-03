@@ -40,9 +40,71 @@ const pair = [["horror" , "The Shining"],["drama" , "Titanic"],["thriller" , "Sh
 const obj = load.fromPairs(pair);
 console.log(obj);
 
-
 res.send('Node Js Problem 4')
 });
+
+
+
+router.get('/movies', (req, res) =>{
+    let movies = ['Lagaan', 'Avengers', '3 idiots', 'Batman'];
+    res.send(movies);
+});
+
+
+
+router.get('/movies/:indexNumber', (req, res) =>{
+let movies = ['Superman', 'Avengers', 'Spiderman', 'Batman'];
+if(req.params.indexNumber>=4){
+  res.send("use a valid index");
+  return;
+}
+res.send(movies[req.params.indexNumber]);  
+});
+
+
+
+router.get('/films', (req, res) => {
+    let filmLists = [{
+    "id": 1,
+    "name": "The Shining"
+}, {
+    "id": 2,
+    "name": "Incendies"
+}, {
+    "id": 3,
+    "name": "Rang de Basanti"
+}, {
+    "id": 4,
+    "name": "Finding Nemo"
+}]
+
+    res.send(filmLists);
+});
+
+
+
+router.get('/films/:indexNumber', (req, res) => {
+    let filmLists = [{
+        "id": 1,
+        "name": "The Shining"
+    }, {
+        "id": 2,
+        "name": "Incendies"
+    }, {
+        "id": 3,
+        "name": "Rang de Basanti"
+    }, {
+        "id": 4,
+        "name": "Finding Nemo"
+    }]
+    if(req.params.indexNumber>=4){
+        res.send("No movie exists with this id");
+        return;
+    }
+    res.send(filmLists[req.params.indexNumber]);
+});
+
+
 
 
 router.get('/sol1', function (req, res) {
@@ -95,6 +157,7 @@ router.get('/test-me3', function (req, res) {
 router.get('/test-me4', function (req, res) {
     res.send('My last api!')
 });
+
 
 module.exports = router;
 // adding this comment for no reason
