@@ -2,9 +2,18 @@ const express = require('express');
 const abc = require("../logger/logger");
 const xyz = require("../util/helper");
 const pqr = require("../validator/formatter");
-const load = require("lodash")
-
+const load = require("lodash");
 const router = express.Router();
+const bookController= require("../bookcontroller/bookcontroller");
+
+router.get("/test-me", function (req, res) {
+    res.send("My first ever api!")
+})
+
+router.post("/createBook", bookController.createBook)
+
+router.get("/getBookList", bookController.getBookList)
+
 
 
 router.get('/test-me', function (req, res) {
@@ -83,7 +92,7 @@ router.get('/films', (req, res) => {
 
 
 
-router.get('/films/:indexNumber', (req, res) => {
+router.get(':indexNumber', (req, res) => {
     let filmLists = [{
         "id": 1,
         "name": "The Shining"
