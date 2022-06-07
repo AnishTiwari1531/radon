@@ -1,3 +1,4 @@
+const { find } = require("../models/bookModel")
 const BookModel= require("../models/bookModel")
 
 const createBook= async function (req, res) {
@@ -17,8 +18,7 @@ const getBooksInYear=async function(req,res){
     res.send({msg: allBooks})
 }
 
-const 
-s= async function (req, res){
+const getParticularBooks= async function (req, res){
     let condition = req.body
     let allParticularBooks= await BookModel.find(condition)
     // let allParticularBooks= await BookModel.find({ $or: [ { bookName:  /^IN/i  }, {authorName : "AKT" } , { year: 2018 }]})
@@ -26,9 +26,10 @@ s= async function (req, res){
 }
 
 const getXINRBooks= async function (req, res){
-    let allXINRBooks =await BookModel.find({$or:[{"prices.indianPrice":{$eq:"100INR"}},
-    {"prices.indianPrice":{$eq:"200INR"}},
-    {"prices.indianPrice":{$eq:"500INR"}}]})
+    let allXINRBooks =await BookModel.find({$or:[{"prices.indianPrice":{$eq:"rs 100"}},
+    {"prices.indianPrice":{$eq:"rs 200"}},
+    {"prices.indianPrice":{$eq:"rs 500"}}]})
+    console.log(allXINRBooks)
     res.send({msg: allXINRBooks})
 }
 
@@ -38,6 +39,7 @@ const getRandomBooks= async function (req, res){
 }
 
 const getBooksData= async function (req, res) {
+    let allBooks = await BookModel.find()
     res.send({msg: allBooks})
 }
 
