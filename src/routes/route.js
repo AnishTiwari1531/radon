@@ -10,6 +10,8 @@ router.post("/authorCreate", bookController1.authorCreate)
 
 router.get("/writtenByChetanBhagat", bookController1.writtenByChetanBhagat)
 
+router.get("/authorOfBook", bookController1.authorOfBook)
+
 router.get("/between", bookController1.between)
 
 

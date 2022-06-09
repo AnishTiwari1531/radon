@@ -29,12 +29,13 @@ const authorOfBook = async function(req, res){
 }
 
 const between = async function(req, res){
-    let btw = await Book1.find( { price : { $gte: 50, $lte: 100} } ).select({ author_id :1})
-    console.log(btw)
-    let allauthor = btw.map(async function(a){
-    
-    })
-    res.send({msg: allauthor})
+    let data = await Book1.find( { price : { $gte: 50, $lte: 100} } ).select({ author_id :1})
+    let btw=[]
+    for (let i of data){
+        let d= await author.find({author_id:i.author_id}).select({author_name:1,_id:0})
+        btw.push(d)
+    }
+    res.send({msg: btw})
 }
 
 
@@ -49,11 +50,3 @@ module.exports.between = between
 
 
 
-
-
-
-
-
-
-// let name1 = await author.find({author_id : a.author_id}).select({author_Name : 1});
-//         return name1;
