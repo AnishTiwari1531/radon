@@ -14,6 +14,7 @@ router.get("/authorOfBook", bookController1.authorOfBook)
 
 router.get("/between", bookController1.between)
 
+router.get("/getbooksByAuthorId", bookController1.getbooksByAuthorId)
 
 
 
