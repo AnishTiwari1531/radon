@@ -30,12 +30,12 @@ const createNewBook = async function (req, res) {
 }
 
 const populateBook = async function (req, res) {
-    let specificBook = await newBook.find().populate("author")
+    let specificBook = await newBook.find().populate("author").populate("publisher")
     res.send({data : specificBook})
 }
 
 const updateIsHardCover =async function (req,res){
-    let data= await newpublisher.find({name:{$in:["Saraswati House","S Singh"]}}).select({_id:1})
+    let data= await newpublisher.find({name:{$in:["Penguin","HarperCollins"]}}).select({_id:1})
     idArr=data.map((obj)=>{return obj._id.toString()})
     let update =await newBook.updateMany({publisher_id:{$in:idArr}},{$set:{isHardCover:true}})
     let upBook=await newBook.find()
