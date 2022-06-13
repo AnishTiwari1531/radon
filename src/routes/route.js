@@ -5,9 +5,41 @@ const UserController= require("../controllers/userController")
 const BookController= require("../controllers/bookController")
 const commonMW = require ("../middlewares/commonMiddlewares")
 
-router.get("/test-me", function (req, res) {
-    res.send("My first ever api!")
+router.get("/timeMW", commonMW.mid1, commonMW.mid2, commonMW.mid3, commonMW.mid4, commonMW.timeMW, function (req, res) {
+    res.send("My first ever middleware!")
 })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
