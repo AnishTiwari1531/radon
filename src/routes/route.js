@@ -21,5 +21,4 @@ router.delete("/users/:userId", cmMw.authenticate, cmMw.authorise, userControlle
 
 router.post("/users/:userId/posts", cmMw.authenticate, cmMw.authorise, userController.postMessage)
 
-// router.post("/users/:userId/posts", cmMw.auth, cmMw.auth2, userController.postMessage)
 module.exports = router;
