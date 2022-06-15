@@ -87,7 +87,7 @@ const postMessage = async function (req, res) {
   let userToBeModified = req.params.userId
   let user = await userModel.findById(userToBeModified)
   if(!user) return res.send({status: false, msg: 'No such user exists'})
-  let updatedPosts = user.posts
+  let updatedPosts = []
   //add the message to user's posts
   updatedPosts.push(message)
   let updatedUser = await userModel.findOneAndUpdate({_id: user._id},{posts: updatedPosts}, {new: true})
