@@ -62,4 +62,3 @@ module.exports.auth = auth
 // module.exports.authenticate = authenticate
 // module.exports.authorise = authorise
 module.exports.auth2 = auth2
-
