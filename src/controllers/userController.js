@@ -52,13 +52,6 @@ const getUserData = async function (req, res) {
 
 const updateUser = async function (req, res) {
   let userId = req.params.userId;
-  let userDetails = await userModel.findById(userId);
-  if (!userDetails)
-    return res.send({ status: false, msg: "No such user exists" });
-
-  res.send({ status: true, data: userDetails });
-// Return a different error message in both these cases
-  
   let user = await userModel.findById(userId);
   //Return an error if no user with the given id exists in the db
   if (!user) {
@@ -66,7 +59,7 @@ const updateUser = async function (req, res) {
   }
 
   let userData = req.body;
-  let updatedUser = await userModel.findOneAndUpdate({ _id: userId }, userData, {new: true, upsert:true});
+  let updatedUser = await userModel.findOneAndUpdate({ _id: userId }, userData, {new: true});
   res.send({ status: "User updated", data: updatedUser });
 };
 
@@ -78,10 +71,10 @@ const del = async function (req, res) {
      if (!user) {
       return res.send("No such user exists");
     }
-  let data = await userModel.updateOne({_id:userId},
-    {$set: {isDeleted : true} }, 
-    { new: true, upsert:true})
-    res.send({ msg: data })
+  let data = await userModel.findOneAndUpdate({_id:userId},
+    {isDeleted : true} , 
+    { new: true})
+    res.send({ status: true, msg: data })
 }
 
 
