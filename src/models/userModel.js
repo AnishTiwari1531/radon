@@ -21,7 +21,7 @@ const userSchema = new mongoose.Schema( {
     },
     posts: {
         type: [], 
-        deafult: []
+        default: []
     }
 }, { timestamps: true });
 

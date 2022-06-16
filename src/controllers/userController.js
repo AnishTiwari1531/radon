@@ -2,14 +2,14 @@ const jwt = require("jsonwebtoken");
 const userModel = require("../models/userModel");
 
 //#1
-const createUser = async function (abcd, xyz) {
+const createUser = async function (req, res) {
   //You can name the req, res objects anything.
   //but the first parameter is always the request 
   //the second parameter is always the response
-  let data = abcd.body;
+  let data = req.body;
   let savedData = await userModel.create(data);
   // console.log(abcd.newAtribute);
-  xyz.send({ msg: savedData });
+  res.send({ msg: savedData });
 };
 
 //#2
@@ -91,7 +91,6 @@ const postMessage = async function (req, res) {
   //add the message to user's posts
   updatedPosts.push(message)
   let updatedUser = await userModel.findOneAndUpdate({_id: user._id},{posts: updatedPosts}, {new: true})
-
   //return the updated user document
   return res.send({status: true, data: updatedUser})
 }
