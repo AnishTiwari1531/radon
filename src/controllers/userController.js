@@ -13,7 +13,7 @@ const createUser = async function (req, res) {
   }
   catch (err) {
     console.log("This is the error :", err.message)
-    res.status(500).send({ msg: "Server Erro", error: err.message })
+    res.status(500).send({ msg: "Server Error", error: err.message })
   }
 };
 
@@ -24,7 +24,7 @@ const loginUser = async function (req, res) {
     let password = req.body.password;
     let user = await userModel.findOne({ emailId: userName, password: password });
     if (!user)
-      return res.status(400).send({
+      return res.status(404).send({
         status: false,
         msg: "username or the password is not corerct",
       });
@@ -41,7 +41,7 @@ const loginUser = async function (req, res) {
   }
   catch (err) {
     console.log("This is the error :", err.message)
-    res.status(500).send({ msg: "Server Erro", error: err.message })
+    res.status(500).send({ msg: "Server Error", error: err.message })
   }
 };
 
@@ -52,13 +52,13 @@ const getUserData = async function (req, res) {
     let userId = req.params.userId;
     let userDetails = await userModel.findById(userId);
     if (!userDetails)
-      return res.status(400).send({ status: false, msg: "No such user exists" });
+      return res.status(404).send({ status: false, msg: "No such user exists" });
 
     res.status(200).send({ status: true, data: userDetails });
   }
   catch (err) {
     console.log("This is the error :", err.message)
-    res.status(500).send({ msg: "Server Erro", error: err.message })
+    res.status(500).send({ msg: "Server Error", error: err.message })
   }
 };
 
@@ -69,7 +69,7 @@ const updateUser = async function (req, res) {
     let userId = req.params.userId;
     let user = await userModel.findById(userId);
     if (!user) {
-      return res.status(400).send("No such user exists");
+      return res.status(404).send("No such user exists");
     }
 
     let userData = req.body;
