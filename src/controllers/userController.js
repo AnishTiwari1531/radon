@@ -13,7 +13,7 @@ const createUser = async function (req, res) {
   }
   catch (err) {
     console.log("This is the error :", err.message)
-    res.status(500).send({ msg: "Error", error: err.message })
+    res.status(500).send({ msg: "Server Erro", error: err.message })
   }
 };
 
@@ -41,7 +41,7 @@ const loginUser = async function (req, res) {
   }
   catch (err) {
     console.log("This is the error :", err.message)
-    res.status(500).send({ msg: "Error", error: err.message })
+    res.status(500).send({ msg: "Server Erro", error: err.message })
   }
 };
 
@@ -58,7 +58,7 @@ const getUserData = async function (req, res) {
   }
   catch (err) {
     console.log("This is the error :", err.message)
-    res.status(500).send({ msg: "Error", error: err.message })
+    res.status(500).send({ msg: "Server Erro", error: err.message })
   }
 };
 
@@ -78,7 +78,7 @@ const updateUser = async function (req, res) {
   }
   catch (err) {
     console.log("This is the error :", err.message)
-    res.status(500).send({ msg: "Error", error: err.message })
+    res.status(500).send({ msg: "Server Error", error: err.message })
   }
 };
 
@@ -89,7 +89,7 @@ const del = async function (req, res) {
     let user = await userModel.findById(userId)
     console.log(user)
     if (!user) {
-      return res.status(400).send("No such user exists");
+      return res.status(404).send("No such user exists");
     }
     let data = await userModel.findOneAndUpdate({ _id: userId },
       { isDeleted: true },
@@ -98,7 +98,7 @@ const del = async function (req, res) {
   }
   catch (err) {
     console.log("This is the error :", err.message)
-    res.status(500).send({ msg: "Error", error: err.message })
+    res.status(500).send({ msg: "Server Error", error: err.message })
   }
 };
 
@@ -108,7 +108,7 @@ const postMessage = async function (req, res) {
   let message = req.body.message
   let userToBeModified = req.params.userId
   let user = await userModel.findById(userToBeModified)
-  if (!user) return res.status(400).send({ status: false, msg: 'No such user exists' })
+  if (!user) return res.status(404).send({ status: false, msg: 'No such user exists' })
   let updatedPosts = []
   //add the message to user's posts
   updatedPosts.push(message)
@@ -118,7 +118,7 @@ const postMessage = async function (req, res) {
 }
 catch(err){
   console.log("This is the error :", err.message)
-  res.status(500).send({ msg: "Error", error: err.message })
+  res.status(500).send({ msg: "Server Error", error: err.message })
 }
 }
 

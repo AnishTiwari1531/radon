@@ -13,7 +13,7 @@ const authenticate = function (req, res, next) {
     }
     catch (err) {
         console.log("This is the error :", err.message)
-        res.status(500).send({ msg: "Error", error: err.message })
+        res.status(500).send({ msg: "Server Error", error: err.message })
     }
     next()
 }
@@ -29,7 +29,7 @@ const authorise = function (req, res, next) {
     }
     catch (err) {
         console.log("This is the error :", err.message)
-        res.status(500).send({ msg: "Error", error: err.message })
+        res.status(500).send({ msg: "Server Error", error: err.message })
     }
     next()
 }
