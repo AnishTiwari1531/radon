@@ -189,7 +189,6 @@ const deleting = async function (req, res) {
 
 const deleteSpecific = async function (req, res) {
     try {
-        
         let filterdata = { isDeleted: false}
         let { category, subcategory, tags, authorId } = req.query
         if (authorId) {
