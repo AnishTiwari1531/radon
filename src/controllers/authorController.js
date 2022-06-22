@@ -2,12 +2,15 @@ const authorModel = require("../models/authorModel")
 
 //------------------------regex---------------------------//
 
+
 let emailRegex= /^[A-Za-z]{1}[A-Za-z0-9]{1,100}[@]{1}[A-Za-z0-9]{2,15}[.]{1}[A-Za-z0-9]{2,10}$/
 
 let passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/
 
 
 //---------------------------------------------------------------//
+
+
 
 const createAuthor = async function (req, res) {
    try{
@@ -48,3 +51,6 @@ const createAuthor = async function (req, res) {
   }
 }
 module.exports.createAuthor = createAuthor
+
+
+//---------------------------------------------------------------//

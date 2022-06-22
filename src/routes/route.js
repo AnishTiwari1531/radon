@@ -4,6 +4,9 @@ const authorController = require("../controllers/authorController")
 const blogController = require("../controllers/blogController")
 
 
+//---------------------------------------------------------------//
+
+
 router.post("/authors", authorController.createAuthor)
 
 router.post("/blogs", blogController.createBlog)
@@ -14,8 +17,11 @@ router.get("/filterblogs",blogController.filterBlogs)
 
 router.put("/blogs/:blogId", blogController.blogs)
 
-router.delete("/delete/:blogId", blogController.deleting)
+router.delete("/blogs/:blogId", blogController.deleting)
 
-router.delete("/deleteSpecific/:blogId", blogController.deleteSpecific)
+router.delete("/blogs", blogController.deleteSpecific)
 
 module.exports = router;
+
+
+//---------------------------------------------------------------//
