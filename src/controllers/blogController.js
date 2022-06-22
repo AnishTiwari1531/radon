@@ -187,37 +187,43 @@ const deleting = async function (req, res) {
 // If the blog document doesn't exist then return an HTTP status of 404 with a body like this
 //...............................................................//
 
-const deleteBlogsByQuery = async function (req, res) {
+const deleteSpecific = async function (req, res) {
     try {
-        let data = req.query
-        const savedData = await blogModel.updateMany(
-            { $and: [data, { isDeleted: false }] },
-            { $set: { isDeleted: true, deletedAt: new Date() } },
-            { new: true }
-        )
-        if (!data) {
-            return res.status(400).send({ status: false, msg: "BAD REQUEST ⚠️" })}
-
-        if (!data.authorId)  {
-            return res.status(404).send({ status: false, msg: "authorId is required ⚠️" })
-        }
         
-        if (savedData.modifiedCount === 0) {
-            return res.status(404).send({ status: false, msg: "DATA NOT FOUND ⚠️" })
+        let filterdata = { isDeleted: false}
+        let { category, subcategory, tags, authorId } = req.query
+        if (authorId) {
+            filterdata.authorId = authorId
+        }
+        if (category) {
+            filterdata.category = category
+        }
+        if (subcategory) {
+            filterdata.subcategory = subcategory
+        }
+        if (tags) {
+            filterdata.tags = tags
+        }
+
+        let data = await blogModel.find(filterdata)
+        console.log(data,filterdata)
+        if (data.length !== 0) {
+            
+            let updatedData = await blogModel.updateMany(filterdata, { isDeleted: true }, { new: true })
+            console.log(updatedData)
+            return res.status(200).send({ status: true, msg: "data is deleted ⚠️" })
         }
         else {
-            return res.status(200).send({ status: true, data: savedData })
-
+            return res.status(404).send({ status: false, msg: "No Data Found ⚠️" })
         }
-
-    } 
+    }
     catch {
-        res.status(500).send({ status: false, msg: "server Error ❌" });
+        res.status(500).send({ status: false, msg: "Server Error ❌" });
     }
 }
 
 //---------------------------------------------------------------//
 
-module.exports = { createBlog, getBlogs, filterBlogs, blogs, deleting, deleteBlogsByQuery }
+module.exports = { createBlog, getBlogs, filterBlogs, blogs, deleting, deleteSpecific }
 
 //---------------------------------------------------------------//
