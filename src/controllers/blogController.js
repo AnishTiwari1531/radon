@@ -120,9 +120,9 @@ const blogs = async function (req, res) {
     try {
         let data = req.body
         let blogId = req.params.blogId
-        if (!blogId) return res.status(404).send({ status: false, msg: "blogId is required ⚠️" })
+        if (!blogId) return res.status(400).send({ status: false, msg: "blogId is required ⚠️" })
         let findblog = await blogModel.findById(blogId)
-        if (!findblog) return res.status(404).send({ msg: "blogId  is invalid" })
+        if (!findblog) return res.status(404).send({ msg: "blogId  is invalid ⚠️" })
         if (findblog.isDeleted == true) return res.status(404).send({ msg: "Blog is already deleted ⚠️" })
         if (findblog.isDeleted == false) {
             let updatedBlog = await blogModel.findOneAndUpdate({ _id: blogId }, {
@@ -187,43 +187,37 @@ const deleting = async function (req, res) {
 // If the blog document doesn't exist then return an HTTP status of 404 with a body like this
 //...............................................................//
 
-const deleteSpecific = async function (req, res) {
+const deleteBlogsByQuery = async function (req, res) {
     try {
-        let query = req.query
-        let filterdata = { isDeleted: false, isPublished: false }
-        let { category, subcategory, tags, authorId } = query
-        if (authorId) {
-            filterdata.authorId = authorId
-        }
-        if (category) {
-            filterdata.category = category
-        }
-        if (subcategory) {
-            filterdata.subcategory = subcategory
-        }
-        if (tags) {
-            filterdata.tags = tags
-        }
+        let data = req.query
+        const savedData = await blogModel.updateMany(
+            { $and: [data, { isDeleted: false }] },
+            { $set: { isDeleted: true, deletedAt: new Date() } },
+            { new: true }
+        )
+        if (!data) {
+            return res.status(400).send({ status: false, msg: "BAD REQUEST ⚠️" })}
 
-        let data = await blogModel.find(filterdata)
-
-        if (data.length !== 0) {
-            filterdata.isDeleted = true
-            let updatedData = await blogModel.findOneAndUpdate({ authorId: authorId }, { isDeleted: true }, { new: true })
-            return res.status(200).send({ status: true, msg: "data is deleted ⚠️" })
+        if (!data.authorId)  {
+            return res.status(404).send({ status: false, msg: "authorId is required ⚠️" })
+        }
+        
+        if (savedData.modifiedCount === 0) {
+            return res.status(404).send({ status: false, msg: "DATA NOT FOUND ⚠️" })
         }
         else {
-            return res.status(404).send({ status: false, msg: "No Data Found ⚠️" })
+            return res.status(200).send({ status: true, data: savedData })
+
         }
-    }
+
+    } 
     catch {
-        res.status(500).send({ status: false, msg: "Server Error ❌" });
+        res.status(500).send({ status: false, msg: "server Error ❌" });
     }
 }
 
-
 //---------------------------------------------------------------//
 
-module.exports = { createBlog, getBlogs, filterBlogs, blogs, deleting, deleteSpecific }
+module.exports = { createBlog, getBlogs, filterBlogs, blogs, deleting, deleteBlogsByQuery }
 
 //---------------------------------------------------------------//
