@@ -1,5 +1,4 @@
 const authorModel = require("../models/authorModel")
-const validator = require("validator")
 
 //------------------------regex---------------------------//
 
