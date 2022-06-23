@@ -1,37 +1,69 @@
 const jwt = require("jsonwebtoken");
+let blogModel = require('../models/blogModel');
+let authorModel = require("../models/authorModel");
 
 //...........................................................//
 
-const authenticate = async function (req, res, next) {
+const authenticate = function (req, res, next) {
     try {
-        let token = req.headers["x-api-key"];
-        if (!token)
-            token = req.headers["x-Api-Key"];
-        if (!token)
-            return res.status(401).send({ status: false, msg: "Token must be present" });
-        else
-            next()
+        let token = req.headers['x-api-key']
+        if (!token) {
+            return res.status(401).send({ status: false, msg: "no authentication token" })
+        } else {
+            let decodedToken = jwt.verify(token, "functionup-Project-1")
+            if (decodedToken) {
+                req.decodedToken = decodedToken
+                next()
+
+            } else {
+                res.status(401).send({ status: false, msg: "not a valid token" })
+            }
+        }
+
     } catch {
-        res.status(500).send({ status: false, msg: "Server Error ❌" });
+        res.status(500).send({ status: false, msg: "server Error ❌" });
     }
 }
 
-const authorise = function (req, res, next) {
+// const authorise = async function (req, res, next) {
+//     try {
+//         const id = req.params.blogId
+//         const data = await blogModel.findById(id)
+//         const authorId = data.authorId.toString()
+//         const token = req.headers['x-api-key']
+//         var decoded = jwt.verify(token, "functionup-Project-1");
+//         if (decoded.authorId == authorId)
+//             next()
+//         else
+//             res.status(404).send({ status: false, msg: "it is not an valid id" })
+//     }
+//     catch {
+//         res.status(500).send({ status: false, msg: "server Error ❌" });
+//     }
+// }
+
+
+const authorise = async function (req, res, next) {
     try {
-        let paramsId = req.query.authorId || req.params.authorId;
-        let decodedToken = jwt.verify(req.headers["x-api-key"] || req.headers["x-api-key"], "functionup-Project-1");
-        let authorLoggedIn = decodedToken.authorId
-        if (!decodedToken)
-            return res.status(401).send({ status: false, msg: "token is invalid" });
-        else if (paramsId !== authorLoggedIn)
-            res.status(403).send({ status: false, msg: 'You are not allowed to modify the requested user\'s data' })
-        else
+        const id = req.params.blogId
+        const data = await blogModel.findById(id)
+        let authorId
+        if(data) authorId = data.authorId.toString()
+        const token = req.headers['x-api-key']
+        var decoded = jwt.verify(token, "functionup-Project-1");
+        console.log(req.query.authorId, !data)
+        if(!req.query.authorId && !data) return res.status(404).send({status : false , msg : "kuch bhi"}) 
+        else if (decoded.authorId == authorId || req.query.authorId)
             next()
-    } catch {
-        res.status(500).send({ status: false, msg: "Server Error ❌" });
+        else
+            res.status(404).send({ status: false, msg: "it is not an valid id" })
+    }
+    catch {
+        res.status(500).send({ status: false, msg: "server Error " });
     }
 }
-
 
 module.exports = { authenticate, authorise }
+
+
 

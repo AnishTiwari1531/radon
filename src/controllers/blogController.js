@@ -204,11 +204,11 @@ const deleteSpecific = async function (req, res) {
         }
 
         let data = await blogModel.find(filterdata)
-        console.log(data,filterdata)
+        // console.log(data,filterdata)
         if (data.length !== 0) {
             
             let updatedData = await blogModel.updateMany(filterdata, { isDeleted: true }, { new: true })
-            console.log(updatedData)
+            // console.log(updatedData)
             return res.status(200).send({ status: true, msg: "data is deleted ⚠️" })
         }
         else {

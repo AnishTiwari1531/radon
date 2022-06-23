@@ -10,11 +10,11 @@ const commonMiddleware = require("../middleware/auth")
 
 router.post("/authors", authorController.createAuthor)
 
-router.post("/blogs", commonMiddleware.authenticate, commonMiddleware.authorise, blogController.createBlog)
+router.post("/blogs", commonMiddleware.authenticate, blogController.createBlog)
 
 router.get("/blogs", commonMiddleware.authenticate, blogController.getBlogs)
 
-router.get("/filterblogs", commonMiddleware.authenticate, commonMiddleware.authorise, blogController.filterBlogs)
+router.get("/filterblogs", commonMiddleware.authenticate, blogController.filterBlogs)
 
 router.put("/blogs/:blogId", commonMiddleware.authenticate, commonMiddleware.authorise, blogController.blogs)
 
