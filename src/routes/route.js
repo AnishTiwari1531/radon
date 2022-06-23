@@ -10,17 +10,17 @@ const commonMiddleware = require("../middleware/auth")
 
 router.post("/authors", authorController.createAuthor)
 
-router.post("/blogs", commonMiddleware.authenticate, blogController.createBlog)
+router.post("/blogs", blogController.createBlog)
 
-router.get("/blogs", commonMiddleware.authenticate, blogController.getBlogs)
+router.get("/blogs", blogController.getBlogs)
 
-router.get("/filterblogs", commonMiddleware.authenticate, blogController.filterBlogs)
+router.get("/filterblogs", blogController.filterBlogs)
 
-router.put("/blogs/:blogId", commonMiddleware.authenticate, commonMiddleware.authorise, blogController.blogs)
+router.put("/blogs/:blogId", commonMiddleware.authorise, blogController.blogs)
 
-router.delete("/blogs/:blogId", commonMiddleware.authenticate, commonMiddleware.authorise, blogController.deleting)
+router.delete("/blogs/:blogId", commonMiddleware.authorise, blogController.deleting)
 
-router.delete("/blogs", commonMiddleware.authenticate, commonMiddleware.authorise, blogController.deleteSpecific)
+router.delete("/blogs", commonMiddleware.authorise, blogController.deleteSpecific)
 
 router.post("/login", blogController.login)
 
