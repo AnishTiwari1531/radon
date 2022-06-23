@@ -2,7 +2,7 @@ const { get } = require("mongoose")
 const authorModel = require("../models/authorModel")
 const blogModel = require("../models/blogModel")
 // const moment = require("moment")
-
+const jwt = require("jsonwebtoken");
 
 //---------------------------------------------------------------//
 
@@ -72,9 +72,8 @@ const getBlogs = async function (req, res) {
 
 const filterBlogs = async function (req, res) {
     try {
-        let query = req.query
         let filterdata = { isDeleted: false }
-        let { category, subcategory, tags, authorId } = query
+        let { category, subcategory, tags, authorId } = req.query
         if (category) {
             filterdata.category = category
         }
@@ -221,8 +220,39 @@ const deleteSpecific = async function (req, res) {
     }
 }
 
+
+//................................................................//
+
+const login = async function (req, res) {
+    try{
+    let userName = req.body.email;
+    let password = req.body.password;
+  
+    let author = await authorModel.findOne({ email: userName, password: password });
+    if (!author)
+      return res.status(401).send({
+        status: false,
+        msg: "username or the password is not corerct ⚠️",
+      });
+
+    let token = jwt.sign(
+      {
+        authorId: author._id.toString(),
+      },
+
+      "functionup-Project-1"
+    );
+    res.setHeader("x-api-key", token);
+    res.status(200).send({ status: true, token: token });
+  }
+  catch {
+    res.status(500).send({ status: false, msg: "Server Error ❌" });
+  }
+}
+  
+  
 //---------------------------------------------------------------//
 
-module.exports = { createBlog, getBlogs, filterBlogs, blogs, deleting, deleteSpecific }
+module.exports = { createBlog, getBlogs, filterBlogs, blogs, deleting, deleteSpecific, login }
 
 //---------------------------------------------------------------//
