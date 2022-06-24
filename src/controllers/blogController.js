@@ -1,30 +1,19 @@
 const { get } = require("mongoose")
 const authorModel = require("../models/authorModel")
 const blogModel = require("../models/blogModel")
-// const moment = require("moment")
-const jwt = require("jsonwebtoken");
+
 
 //---------------------------------------------------------------//
 
-//Q-2
-
-// POST /blogs
-// Create a blog document from request body. Get authorId in request body only.
-
-// Make sure the authorId is a valid authorId by checking the author exist in the authors collection.
-
-// Return HTTP status 201 on a succesful blog creation. Also return the blog document. The response should be a JSON object like this
-
-// Create atleast 5 blogs for each author
-
-// Return HTTP status 400 for an invalid request with a response body like this
-
+//..2.. POST /blogs API
 
 //...............................................................//
 
 const createBlog = async function (req, res) {
     try {
         let data = req.body
+        if (Object.keys(data).length === 0)
+        return res.status(400).send({ Status: false, message: "Please provide the data ⚠️" })
         if (data.isPublished === true) data.publishedAt = Date.now()
         if (await authorModel.findById(data.authorId)) {
             let savedData = await blogModel.create(data)
@@ -33,89 +22,47 @@ const createBlog = async function (req, res) {
         else
             res.status(400).send({ msg: "authorId is not valid ⚠️" })
     }
-    catch {
-        res.status(500).send({ status: false, msg: "server Error ❌" });
-    }
+    catch (error) {
+        res.status(500).send({ status : false , error: error.message })
+      }
 }
 
 
 //---------------------------------------------------------------//
 
-//Q-3
-
-// GET /blogs
-// Returns all blogs in the collection that aren't deleted and are published
-// Return the HTTP status 200 if any documents are found. The response structure should be like this
-// If no documents are found then return an HTTP status 404 with a response like this
-// Filter blogs list by applying filters. Query param can have any combination of below filters.
-// By author Id
-// By category
-// List of blogs that have a specific tag
-// List of blogs that have a specific subcategory example of a query url: blogs?filtername=filtervalue&f2=fv2
-
-//................................................................//
-
-const getBlogs = async function (req, res) {
-    try {
-        let a = await blogModel.find({ isDeleted: false, isPublished: true })
-        if (a.length > 0)
-            res.status(200).send(a)
-        else
-            res.status(404).send({ status: false, msg: "Data Not Found ⚠️" })
-    } catch {
-        res.status(500).send({ status: false, msg: "server Error ❌" });
-    }
-}
-
+//....3....GET /blogs APi
 
 //---------------------------------------------------------------//
-
-const filterBlogs = async function (req, res) {
-    try {
-        let filterdata = { isDeleted: false }
-        let { category, subcategory, tags, authorId } = req.query
-        if (category) {
-            filterdata.category = category
-        }
-        if (subcategory) {
-            filterdata.subcategory = subcategory
-        }
-        if (authorId) {
-            filterdata.authorId = authorId
-        }
-        if (tags) {
-            filterdata.tags = tags
-        }
-        console.log(filterdata)
-
-        let data = await blogModel.find(filterdata)
-        if (data.length === 0) {
-            return res.status(404).send({ status: false, msg: "No Data Found ⚠️" })
-        }
-        else
-            return res.status(200).send(data)
-    }
-    catch {
-        res.status(500).send({ status: false, msg: "server Error ❌" });
-    }
-}
-
-
-//---------------------------------------------------------------//
-
-//Q-4
-
-// PUT /blogs/:blogId
-// Updates a blog by changing the its title, body, adding tags, adding a subcategory. (Assuming tag and subcategory received in body is need to be added)
-// Updates a blog by changing its publish status i.e. adds publishedAt date and set published to true
-// Check if the blogId exists (must have isDeleted false). If it doesn't, return an HTTP status 404 with a response body like this
-// Return an HTTP status 200 if updated successfully with a body like this
-// Also make sure in the response you return the updated blog document.
-
-//...............................................................//
-
 
 const blogs = async function (req, res) {
+    try {
+      let blogFound = await blogModel.find(req.query)//.populate("authorId", { title: 1, fname: 1, lname: 1 });
+      console.log(req.query)
+      let len = blogFound.length;
+      let arr = [];
+      for (let i = 0; i < len; i++) {
+        if (blogFound[i].isDeleted == false && blogFound[i].isPublished == true) {
+          arr.push(blogFound[i]);
+        } else {
+          continue;
+        }
+      }
+      if (arr.length > 0) {
+        res.status(200).send({ status: true, data: arr });
+      } else {
+        res.status(404).send({status: false, message: "No such blog is found ⚠️" });
+      }
+    }  catch (error) {
+        res.status(500).send({ status : false , error: error.message })
+      }
+    }
+//.................................................................///
+
+//..4...PUT /blogs/:blogId...API
+//...........................................................//
+
+
+const update = async function (req, res) {
     try {
         let data = req.body
         let blogId = req.params.blogId
@@ -129,7 +76,6 @@ const blogs = async function (req, res) {
                     title: data.title,
                     body: data.body,
                     category: data.category,
-                    // publishedAt: moment().format(),  // new Date()
                     publishedAt: Date.now(),
                     isPublished: true
                 },
@@ -140,25 +86,22 @@ const blogs = async function (req, res) {
             }, { new: true, upsert: true })
             return res.status(200).send(updatedBlog)
         }
-    } catch {
-        res.status(500).send({ status: false, msg: "server Error ❌" });
-    }
+    }  catch (error) {
+        res.status(500).send({ status : false , error: error.message })
+      }
 }
 
 
 //---------------------------------------------------------------//
 
-//Q-5
-
-// DELETE /blogs/:blogId
-// Check if the blogId exists( and is not deleted). If it does, mark it deleted and return an HTTP status 200 without any response body.
-// If the blog document doesn't exist then return an HTTP status of 404 with a body like this
-
+//....5......DELETE /blogs/:blogId API..........................//
 //...............................................................//
 
 const deleting = async function (req, res) {
     try {
         let id = req.params.blogId
+        // if(!id)  
+        // return res.status(404).send({ status: false, msg: "Please provide the valid BlogId" }) 
         let data = await blogModel.findById(id)
         if (data) {
             if (data.isDeleted == false) {
@@ -172,18 +115,16 @@ const deleting = async function (req, res) {
         }
 
     }
-    catch {
-        res.status(500).send({ status: false, msg: "server Error ❌" });
-    }
+    catch (error) {
+        res.status(500).send({ status : false , error: error.message })
+      }
 }
 
 
 //---------------------------------------------------------------//
 
-//Q-6
-// DELETE /blogs?queryParams
-// Delete blog documents by category, authorid, tag name, subcategory name, unpublished
-// If the blog document doesn't exist then return an HTTP status of 404 with a body like this
+//.....6..........DELETE /blogs?queryParams....API............//
+
 //...............................................................//
 
 const deleteSpecific = async function (req, res) {
@@ -204,55 +145,22 @@ const deleteSpecific = async function (req, res) {
         }
 
         let data = await blogModel.find(filterdata)
-        // console.log(data,filterdata)
         if (data.length !== 0) {
             
             let updatedData = await blogModel.updateMany(filterdata, { isDeleted: true }, { new: true })
-            // console.log(updatedData)
             return res.status(200).send({ status: true, msg: "data is deleted ⚠️" })
         }
         else {
             return res.status(404).send({ status: false, msg: "No Data Found ⚠️" })
         }
     }
-    catch {
-        res.status(500).send({ status: false, msg: "Server Error ❌" });
-    }
+    catch (error) {
+        res.status(500).send({ status : false , error: error.message })
+      }
 }
 
+//...............................................................//
 
-//................................................................//
-
-const login = async function (req, res) {
-    try{
-    let userName = req.body.email;
-    let password = req.body.password;
-  
-    let author = await authorModel.findOne({ email: userName, password: password });
-    if (!author)
-      return res.status(401).send({
-        status: false,
-        msg: "username or the password is not corerct ⚠️",
-      });
-
-    let token = jwt.sign(
-      {
-        authorId: author._id.toString(),
-      },
-
-      "functionup-Project-1"
-    );
-    res.setHeader("x-api-key", token);
-    res.status(200).send({ status: true, token: token });
-  }
-  catch {
-    res.status(500).send({ status: false, msg: "Server Error ❌" });
-  }
-}
-  
-  
-//---------------------------------------------------------------//
-
-module.exports = { createBlog, getBlogs, filterBlogs, blogs, deleting, deleteSpecific, login }
+module.exports = { createBlog, blogs, update, deleting, deleteSpecific }
 
 //---------------------------------------------------------------//
